@@ -26,6 +26,9 @@
  *****************************************************************************/
 
 #include "common.h"
+#if HAVE_RVV_KERNELS && BIT_DEPTH == 8
+#include "riscv/sad_rvv.c"
+#endif
 
 #if HAVE_MMX
 #   include "x86/pixel.h"
@@ -871,6 +874,17 @@ void x264_pixel_init( uint32_t cpu, x264_pixel_function_t *pixf )
     INIT7( satd_x4, );
     INIT4( hadamard_ac, );
     INIT_ADS( );
+
+#if HAVE_RVV_KERNELS && BIT_DEPTH == 8
+    /* RVV 只覆盖 8bit SAD/SSD 的 7 个尺寸（4x16 仍走 C）。
+     * 注意：x264 的 configure 会在 config.h 里写死 `#define HAVE_RVV 0`，
+     * 用 -DHAVE_RVV=1 传进来会被 config.h 覆盖（只会报 redefined 警告），
+     * 所以这里用自定义宏 HAVE_RVV_KERNELS。 */
+    INIT7_NAME( sad,    sad,    _rvv );
+    INIT7_NAME( sad_x3, sad_x3, _rvv );
+    INIT7_NAME( sad_x4, sad_x4, _rvv );
+    INIT7_NAME( ssd,    ssd,    _rvv );
+#endif
 
     pixf->sa8d[PIXEL_16x16] = x264_pixel_sa8d_16x16;
     pixf->sa8d[PIXEL_8x8]   = x264_pixel_sa8d_8x8;
