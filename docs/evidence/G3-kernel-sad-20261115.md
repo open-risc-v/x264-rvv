@@ -2,7 +2,7 @@
 
 - 日期：2026-11-15
 - 上游：`videolan/x264` @ `0480cb05fa188d37ae87e8f4fd8f1aea3711f7ee`
-- 目标板：SpacemiT K3 / Bianbu，`Linux k3 6.18.3 riscv64`，RVV 1.0
+- 目标板：SpacemiT K3 / <distro>，`Linux k3 6.18.3 riscv64`，RVV 1.0
 - 变量：`-DHAVE_RVV_KERNELS=1 -march=rv64gcv`（两侧同为 `-march=rv64gcv`，唯一变量是该宏）
 
 ## 1. 选型理由
